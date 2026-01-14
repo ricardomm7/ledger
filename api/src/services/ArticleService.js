@@ -40,6 +40,10 @@ class ArticleService {
     return await this.articleRepository.findAll();
   }
 
+  async searchArticles(filters) {
+    return await this.articleRepository.search(filters);
+  }
+
   async deleteArticle(id) {
     const existingArticle = await this.articleRepository.findById(id);
     if (!existingArticle) {

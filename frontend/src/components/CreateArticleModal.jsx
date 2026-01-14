@@ -226,7 +226,14 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
                   required
                 />
               </div>
-              {error && <p className="error">{error}</p>}
+              {error && (
+                <div className="error-box">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 0a8 8 0 100 16A8 8 0 008 0zM7 4h2v5H7V4zm0 6h2v2H7v-2z"/>
+                  </svg>
+                  <span>{error}</span>
+                </div>
+              )}
               <div className="modal-footer">
                 <button type="button" className="btn ghost" onClick={handleClose}>
                   Cancelar
@@ -259,7 +266,14 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
                 />
               </div>
               <p className="form-hint">O JSON deve conter um array "artigos" com os artigos a criar.</p>
-              {error && <p className="error">{error}</p>}
+              {error && (
+                <div className="error-box">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 0a8 8 0 100 16A8 8 0 008 0zM7 4h2v5H7V4zm0 6h2v2H7v-2z"/>
+                  </svg>
+                  <span>{error}</span>
+                </div>
+              )}
               
               {bulkResults && (
                 <div className="bulk-results">

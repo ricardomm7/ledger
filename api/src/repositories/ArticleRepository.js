@@ -75,6 +75,35 @@ class ArticleRepository extends IArticleRepository {
     return result.rows.map(row => this.mapRowToArticle(row));
   }
 
+  async search(filters) {
+    let query = 'SELECT * FROM articles WHERE 1=1';
+    const params = [];
+    let paramCount = 1;
+
+    if (filters.id) {
+      query += ` AND id ILIKE $${paramCount}`;
+      params.push(`%${filters.id}%`);
+      paramCount++;
+    }
+
+    if (filters.type) {
+      query += ` AND type ILIKE $${paramCount}`;
+      params.push(`%${filters.type}%`);
+      paramCount++;
+    }
+
+    if (filters.description) {
+      query += ` AND description ILIKE $${paramCount}`;
+      params.push(`%${filters.description}%`);
+      paramCount++;
+    }
+
+    query += ' ORDER BY created_at DESC';
+    const result = await this.db.query(query, params);
+    
+    return result.rows.map(row => this.mapRowToArticle(row));
+  }
+
   async update(id, article) {
     const query = `
       UPDATE articles

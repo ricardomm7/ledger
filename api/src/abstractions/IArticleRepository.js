@@ -18,6 +18,10 @@ class IArticleRepository {
   async getNextId() {
     throw new Error('getNextId() deve ser implementado');
   }
+
+  async search(filters) {
+    throw new Error('search() deve ser implementado');
+  }
 }
 
 module.exports = IArticleRepository;

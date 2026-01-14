@@ -6,6 +6,16 @@ export async function listArticles() {
   return toArticleList(data?.data || data);
 }
 
+export async function searchArticles(filters) {
+  const params = new URLSearchParams();
+  if (filters.id) params.append('id', filters.id);
+  if (filters.type) params.append('type', filters.type);
+  if (filters.description) params.append('description', filters.description);
+  
+  const data = await request(`/api/articles/search?${params.toString()}`);
+  return toArticleList(data?.data || data);
+}
+
 export async function createArticle(payload) {
   const body = buildCreateArticleRequest(payload);
   const data = await request('/api/articles', {

@@ -42,6 +42,16 @@ services:
       - .:/app
       - /app/node_modules
 
+  frontend:
+    build: ../frontend
+    container_name: ledger-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - ledger-network
+
 volumes:
   postgres_data:
 

@@ -46,6 +46,27 @@ class ArticleController {
     }
   }
 
+  async search(req, res, next) {
+    try {
+      const { id, type, description } = req.query;
+      const filters = {};
+      
+      if (id) filters.id = id;
+      if (type) filters.type = type;
+      if (description) filters.description = description;
+      
+      const articles = await this.articleService.searchArticles(filters);
+      
+      return res.status(200).json({
+        success: true,
+        data: articles,
+        count: articles.length
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async delete(req, res, next) {
     try {
       const { id } = req.params;
