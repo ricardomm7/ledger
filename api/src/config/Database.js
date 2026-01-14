@@ -29,7 +29,7 @@ class Database {
     try {
       const result = await this.pool.query(text, params);
       const duration = Date.now() - start;
-      console.log('Query executada:', { text, duration, rows: result.rowCount });
+      //console.log('Query executada:', { text, duration, rows: result.rowCount });
       return result;
     } catch (error) {
       console.error('Erro na query:', error);

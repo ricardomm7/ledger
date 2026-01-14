@@ -7,14 +7,47 @@ class ArticleRepository extends IArticleRepository {
     this.db = Database.getInstance();
   }
 
-  async create(article) {
+  async getNextId() {
     const query = `
-      INSERT INTO articles (type, description)
-      VALUES ($1, $2)
-      RETURNING *
+      SELECT id FROM articles 
+      WHERE id ~ '^NF[0-9]+$'
+      ORDER BY CAST(SUBSTRING(id FROM 3) AS INTEGER) DESC 
+      LIMIT 1
     `;
+    const result = await this.db.query(query);
     
-    const result = await this.db.query(query, [article.type, article.description]);
+    if (result.rows.length === 0) {
+      return 1;
+    }
+    
+    const lastId = result.rows[0].id;
+    const lastNumber = parseInt(lastId.substring(2));
+    return lastNumber + 1;
+  }
+
+  async create(article) {
+    let query;
+    let params;
+
+    if (article.id) {
+      // Inserção com ID customizado (via JSON)
+      query = `
+        INSERT INTO articles (id, type, description)
+        VALUES ($1, $2, $3)
+        RETURNING *
+      `;
+      params = [article.id, article.type, article.description];
+    } else {
+      // Inserção manual (ID auto-gerado)
+      query = `
+        INSERT INTO articles (type, description)
+        VALUES ($1, $2)
+        RETURNING *
+      `;
+      params = [article.type, article.description];
+    }
+    
+    const result = await this.db.query(query, params);
     const row = result.rows[0];
     
     article.id = row.id;

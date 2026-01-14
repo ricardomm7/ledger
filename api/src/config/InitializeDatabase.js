@@ -7,7 +7,7 @@ async function initializeDatabase() {
   try {
     await db.query(`
       CREATE TABLE IF NOT EXISTS articles (
-        id SERIAL PRIMARY KEY,
+        id VARCHAR(50) PRIMARY KEY,
         type VARCHAR(255) NOT NULL,
         description TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

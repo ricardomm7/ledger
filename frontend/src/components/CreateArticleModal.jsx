@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { createArticle } from '../services/articleService';
+import { createArticle, createBulkArticles } from '../services/articleService';
 
 export function CreateArticleModal({ isOpen, onClose, onCreated }) {
-  const [activeTab, setActiveTab] = useState('manual'); // 'manual' ou 'json'
+  const [activeTab, setActiveTab] = useState('manual'); // 'manual', 'json', ou 'bulk'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -12,6 +12,9 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
 
   // Upload JSON
   const [jsonContent, setJsonContent] = useState('');
+  
+  // Resultados do bulk upload
+  const [bulkResults, setBulkResults] = useState(null);
 
   if (!isOpen) return null;
 
@@ -20,7 +23,8 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
     setError('');
     setLoading(true);
     try {
-      const article = await createArticle({ id: Date.now(), type, description });
+      // Não enviar ID - backend gera automaticamente
+      const article = await createArticle({ type, description });
       onCreated?.(article);
       resetForm();
       onClose();
@@ -43,11 +47,17 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
         throw new Error('JSON deve conter "type" e "description"');
       }
 
-      const article = await createArticle({
-        id: data.id || Date.now(),
+      const payload = {
         type: data.type,
         description: data.description
-      });
+      };
+
+      // Só incluir ID se existir no JSON
+      if (data.id) {
+        payload.id = data.id;
+      }
+
+      const article = await createArticle(payload);
       
       onCreated?.(article);
       resetForm();
@@ -74,11 +84,54 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
     reader.readAsText(file);
   };
 
+  const handleBulkSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setBulkResults(null);
+    setLoading(true);
+    try {
+      const data = JSON.parse(jsonContent);
+      
+      // Validar estrutura básica
+      if (!data.artigos || !Array.isArray(data.artigos)) {
+        throw new Error('JSON deve conter um array "artigos"');
+      }
+
+      const results = await createBulkArticles(data.artigos);
+      
+      const successCount = results.success?.length || 0;
+      const errorCount = results.errors?.length || 0;
+      
+      // Armazenar resultados para exibição
+      setBulkResults(results);
+      
+      // Recarregar lista mesmo com erros parciais
+      if (successCount > 0) {
+        onCreated?.();
+      }
+      
+      // Só fechar se não houver erros
+      if (errorCount === 0) {
+        resetForm();
+        onClose();
+      }
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        setError('JSON inválido: ' + err.message);
+      } else {
+        setError(err.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const resetForm = () => {
     setType('');
     setDescription('');
     setJsonContent('');
     setError('');
+    setBulkResults(null);
     setActiveTab('manual');
   };
 
@@ -106,7 +159,13 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
             className={`modal-tab ${activeTab === 'json' ? 'active' : ''}`}
             onClick={() => setActiveTab('json')}
           >
-            Upload JSON
+            JSON Único
+          </button>
+          <button
+            className={`modal-tab ${activeTab === 'bulk' ? 'active' : ''}`}
+            onClick={() => setActiveTab('bulk')}
+          >
+            Upload em Massa
           </button>
         </div>
 
@@ -145,7 +204,7 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
                 </button>
               </div>
             </form>
-          ) : (
+          ) : activeTab === 'json' ? (
             <form onSubmit={handleJsonSubmit} className="create-form">
               <div className="form-field">
                 <label htmlFor="json-file">Carregar ficheiro JSON</label>
@@ -174,6 +233,86 @@ export function CreateArticleModal({ isOpen, onClose, onCreated }) {
                 </button>
                 <button type="submit" className="btn primary" disabled={loading}>
                   {loading ? 'A criar...' : 'Criar Artigo'}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleBulkSubmit} className="create-form">
+              <div className="form-field">
+                <label htmlFor="bulk-file">Carregar ficheiro JSON com múltiplos artigos</label>
+                <input
+                  id="bulk-file"
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={handleFileUpload}
+                />
+              </div>
+              <div className="form-field">
+                <label htmlFor="bulk-content">Ou cole o JSON aqui</label>
+                <textarea
+                  id="bulk-content"
+                  value={jsonContent}
+                  onChange={(e) => setJsonContent(e.target.value)}
+                  placeholder='{"artigos": [{"type": "Expense", "description": "..."}, ...]}'
+                  rows={8}
+                  required
+                />
+              </div>
+              <p className="form-hint">O JSON deve conter um array "artigos" com os artigos a criar.</p>
+              {error && <p className="error">{error}</p>}
+              
+              {bulkResults && (
+                <div className="bulk-results">
+                  <div className="bulk-summary">
+                    <div className="summary-item success">
+                      <span className="summary-icon">✓</span>
+                      <span className="summary-text">
+                        <strong>{bulkResults.success?.length || 0}</strong> criados
+                      </span>
+                    </div>
+                    <div className="summary-item error">
+                      <span className="summary-icon">✕</span>
+                      <span className="summary-text">
+                        <strong>{bulkResults.errors?.length || 0}</strong> erros
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {bulkResults.errors && bulkResults.errors.length > 0 && (
+                    <div className="bulk-errors">
+                      <div className="bulk-errors-header">
+                        <span>Detalhes dos Erros</span>
+                      </div>
+                      <div className="bulk-errors-list">
+                        {bulkResults.errors.map((err, idx) => (
+                          <div key={idx} className="bulk-error-item">
+                            <div className="error-badge">{idx + 1}</div>
+                            <div className="error-content">
+                              <div className="error-data">
+                                {err.data?.type && <span className="error-field">Tipo: {err.data.type}</span>}
+                                {err.data?.description && (
+                                  <span className="error-field">
+                                    Descrição: {err.data.description.substring(0, 50)}
+                                    {err.data.description.length > 50 ? '...' : ''}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="error-message">{err.error}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="modal-footer">
+                <button type="button" className="btn ghost" onClick={handleClose}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn primary" disabled={loading}>
+                  {loading ? 'A carregar...' : 'Criar em Massa'}
                 </button>
               </div>
             </form>

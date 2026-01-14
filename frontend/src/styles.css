@@ -17,10 +17,9 @@
 body {
     margin: 0;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: radial-gradient(circle at 10% 20%, rgba(79, 225, 193, 0.08), transparent 25%),
-        radial-gradient(circle at 80% 0%, rgba(124, 192, 255, 0.1), transparent 25%),
-        var(--bg);
+    background: var(--bg);
     color: var(--text);
+    overflow-y: scroll;
 }
 
 .page {
@@ -117,6 +116,207 @@ body {
     margin: 0;
     text-align: center;
     padding: 32px 0;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.pagination-btn {
+    min-width: 110px;
+    height: 38px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 13px;
+    color: var(--muted);
+    min-width: 220px;
+    justify-content: center;
+}
+
+.pagination-info strong {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.pagination-total {
+    margin-left: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    opacity: 0.7;
+}
+
+/* Bulk Upload Results */
+.bulk-results {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.bulk-summary {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.summary-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.summary-item.success {
+    background: rgba(79, 225, 193, 0.1);
+    border: 1px solid rgba(79, 225, 193, 0.3);
+}
+
+.summary-item.error {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.summary-icon {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.summary-item.success .summary-icon {
+    color: var(--accent);
+}
+
+.summary-item.error .summary-icon {
+    color: #ff6b6b;
+}
+
+.summary-text {
+    color: var(--text);
+}
+
+.summary-text strong {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.bulk-errors {
+    margin-top: 12px;
+}
+
+.bulk-errors-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.bulk-errors-list {
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bulk-error-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255, 107, 107, 0.05);
+    border: 1px solid rgba(255, 107, 107, 0.2);
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.error-badge {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.error-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.error-data {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.error-field {
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-weight: 500;
+}
+
+.bulk-errors-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bulk-errors-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 3px;
+}
+
+.bulk-errors-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+.bulk-errors-list::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
 }
 
 
@@ -414,6 +614,12 @@ body {
 .form-field textarea::placeholder {
     color: var(--muted);
     opacity: 0.6;
+}
+
+.form-hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: -8px;
 }
 
 /* Modal */

@@ -59,6 +59,29 @@ class ArticleController {
       next(error);
     }
   }
+
+  async createBulk(req, res, next) {
+    try {
+      const { artigos } = req.body;
+
+      if (!Array.isArray(artigos)) {
+        return res.status(400).json({
+          success: false,
+          message: 'O campo "artigos" deve ser um array'
+        });
+      }
+
+      const results = await this.articleService.createBulkArticles(artigos);
+      
+      return res.status(201).json({
+        success: true,
+        data: results,
+        message: `${results.success.length} de ${results.total} artigos criados com sucesso`
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = ArticleController;

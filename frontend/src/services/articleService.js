@@ -19,3 +19,11 @@ export async function deleteArticle(id) {
   await request(`/api/articles/${id}`, { method: 'DELETE' });
   return true;
 }
+
+export async function createBulkArticles(articles) {
+  const data = await request('/api/articles/bulk', {
+    method: 'POST',
+    body: JSON.stringify({ artigos: articles }),
+  });
+  return data?.data || data;
+}

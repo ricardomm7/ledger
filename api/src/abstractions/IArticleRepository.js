@@ -14,6 +14,10 @@ class IArticleRepository {
   async delete(id) {
     throw new Error('delete() deve ser implementado');
   }
+  
+  async getNextId() {
+    throw new Error('getNextId() deve ser implementado');
+  }
 }
 
 module.exports = IArticleRepository;

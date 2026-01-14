@@ -13,8 +13,8 @@ class Article {
   }
 
   static validate(id, type, description) {
-    if (id === null || id === undefined) {
-      throw new Error('ID do artigo é obrigatório');
+    if (id && typeof id !== 'string') {
+      throw new Error('ID do artigo deve ser uma string');
     }
 
     if (!type || typeof type !== 'string' || type.trim() === '') {
