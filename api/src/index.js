@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const DependencyInjection = require('./config/DependencyInjection');
 const createArticleRoutes = require('./routes/articleRoutes');
+const initializeDatabase = require('./config/InitializeDatabase');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,8 +44,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
-});
+async function startServer() {
+  try {
+    await initializeDatabase();
+    
+    app.listen(PORT, () => {
+      console.log(`Servidor rodando em http://localhost:${PORT}`);
+      console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Base de dados: ${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`);
+    });
+  } catch (error) {
+    console.error('Erro ao iniciar servidor:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
