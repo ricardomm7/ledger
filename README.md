@@ -18,8 +18,9 @@ Sistema full-stack para gestão de artigos com suporte a criação manual, uploa
 ✅ Paginação (20 artigos por página)  
 ✅ Geração de QR Code para cada artigo  
 ✅ Impressão de etiquetas individual e em massa (múltiplos QR Codes por página)  
-✅ Interface responsiva com design moderno  
-✅ Validação robusta de dados (backend + frontend)
+✅ Interface responsiva com design moderno em mosaicos  
+✅ Validação robusta de dados com Value Objects (tipo max 50 chars, descrição max 255 chars)  
+✅ Arquitetura Domain-Driven Design com Value Objects
 
 ## Iniciar o Projeto
 
@@ -59,7 +60,7 @@ npm run dev -- --host
 ledger/
 ├── api/                      # Backend Express.js
 │   ├── src/
-│   │   ├── domain/          # Entidades e lógica de negócio
+│   │   ├── domain/          # Entidades e Value Objects
 │   │   ├── repositories/    # Acesso a dados
 │   │   ├── services/        # Lógica de aplicação
 │   │   ├── controllers/     # Handlers HTTP

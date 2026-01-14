@@ -36,7 +36,7 @@ class ArticleRepository extends IArticleRepository {
         VALUES ($1, $2, $3)
         RETURNING *
       `;
-      params = [article.id, article.type, article.description];
+      params = [article.id, article.getType(), article.getDescription()];
     } else {
       // Inserção manual (ID auto-gerado)
       query = `
@@ -44,7 +44,7 @@ class ArticleRepository extends IArticleRepository {
         VALUES ($1, $2)
         RETURNING *
       `;
-      params = [article.type, article.description];
+      params = [article.getType(), article.getDescription()];
     }
     
     const result = await this.db.query(query, params);
@@ -112,7 +112,7 @@ class ArticleRepository extends IArticleRepository {
       RETURNING *
     `;
 
-    const result = await this.db.query(query, [article.type, article.description, id]);
+    const result = await this.db.query(query, [article.getType(), article.getDescription(), id]);
     
     if (result.rows.length === 0) {
       return null;
@@ -133,8 +133,14 @@ class ArticleRepository extends IArticleRepository {
   }
 
   mapRowToArticle(row) {
+    const ArticleType = require('../domain/ArticleType');
+    const Description = require('../domain/Description');
     const Article = require('../domain/Article');
-    const article = new Article(row.id, row.type, row.description, row.created_at);
+    
+    const type = new ArticleType(row.type);
+    const description = new Description(row.description);
+    const article = new Article(row.id, type, description, row.created_at);
+    
     return article;
   }
 }

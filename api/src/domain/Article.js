@@ -1,3 +1,6 @@
+const ArticleType = require('./ArticleType');
+const Description = require('./Description');
+
 class Article {
   constructor(id, type, description, createdAt) {
     this.id = id;
@@ -6,23 +9,20 @@ class Article {
     this.createdAt = createdAt;
   }
 
-  static create(id, type, description) {
-    this.validate(id, type, description);
+  static create(id, typeValue, descriptionValue) {
+    this.validate(id);
+    
+    // Criar os value objects
+    const type = new ArticleType(typeValue);
+    const description = new Description(descriptionValue);
+    
     const now = new Date();
     return new Article(id, type, description, now);
   }
 
-  static validate(id, type, description) {
+  static validate(id) {
     if (id && typeof id !== 'string') {
       throw new Error('ID do artigo deve ser uma string');
-    }
-
-    if (!type || typeof type !== 'string' || type.trim() === '') {
-      throw new Error('Tipo do artigo é obrigatório e deve ser uma string');
-    }
-
-    if (!description || typeof description !== 'string' || description.trim() === '') {
-      throw new Error('Descrição do artigo é obrigatória e deve ser uma string');
     }
   }
 
@@ -31,15 +31,25 @@ class Article {
   }
 
   getType() {
-    return this.type;
+    return this.type.getValue();
   }
 
   getDescription() {
-    return this.description;
+    return this.description.getValue();
   }
 
   getCreatedAt() {
     return this.createdAt;
+  }
+
+  // Método para serialização JSON
+  toJSON() {
+    return {
+      id: this.id,
+      type: this.getType(),
+      description: this.getDescription(),
+      createdAt: this.createdAt
+    };
   }
 }
 

@@ -8,8 +8,8 @@ async function initializeDatabase() {
     await db.query(`
       CREATE TABLE IF NOT EXISTS articles (
         id VARCHAR(50) PRIMARY KEY,
-        type VARCHAR(255) NOT NULL,
-        description TEXT NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        description VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);

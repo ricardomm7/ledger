@@ -224,8 +224,26 @@ DELETE /api/articles/NF00001
 ### Article Domain
 
 - **ID**: String no formato `NFxxxxx` (validado se fornecido)
-- **Type**: String obrigatória, não vazia
-- **Description**: String obrigatória, não vazia
+- **Type**: Value Object ArticleType - string obrigatória, não vazia, máximo 50 caracteres
+- **Description**: Value Object Description - string obrigatória, não vazia, máximo 255 caracteres
+
+### Value Objects
+
+O projeto utiliza Value Objects para encapsular validação e lógica de negócio:
+
+**ArticleType:**
+- Valida que o tipo é uma string não vazia
+- Máximo 50 caracteres
+- Métodos: `getValue()`, `toString()`, `equals()`
+
+**Description:**
+- Valida que a descrição é uma string não vazia
+- Máximo 255 caracteres
+- Métodos: `getValue()`, `toString()`, `equals()`
+
+**Serialização:**
+- Article possui método `toJSON()` para conversão automática em JSON
+- Value Objects são convertidos para strings na resposta da API
 
 **Conversões automáticas:**
 - Se `type` ou `description` forem números, são convertidos para string
@@ -276,8 +294,8 @@ IDs são gerados no formato `NFxxxxx`:
 ```sql
 CREATE TABLE IF NOT EXISTS articles (
     id VARCHAR(50) PRIMARY KEY,
-    type VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    description VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```

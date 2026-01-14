@@ -45,7 +45,11 @@ frontend/
 
 ### 1. Listagem de Artigos
 
-- Grid/Lista responsiva
+- **Vista em Mosaicos**: Grid responsivo com tiles adaptativos
+- Layout: `repeat(auto-fill, minmax(280px, 1fr))`
+- Cards com altura mínima de 160px
+- Efeito hover com elevação e sombra
+- Descrição truncada a 2 linhas
 - Paginação (20 artigos por página)
 - Indicador visual de página atual
 - Contador total de artigos
