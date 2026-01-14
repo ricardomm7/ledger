@@ -48,10 +48,10 @@ export function BulkPrintModal({ isOpen, onClose, articles }) {
     <>
       {/* Modal overlay (não imprime) */}
       <div className="modal-overlay no-print" onClick={onClose}>
-        <div className="modal-dialog bulk-print-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-dialog modal-dialog-large bulk-print-modal" onClick={e => e.stopPropagation()}>
           <div className="modal-header">
             <h3>Impressão em Massa</h3>
-            <button className="modal-close" onClick={onClose}>×</button>
+            <button className="modal-close" onClick={onClose}>✕</button>
           </div>
 
           <div className="modal-body">
