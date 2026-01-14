@@ -3,11 +3,13 @@ import { useArticles } from './hooks/useArticles';
 import { ArticleList } from './components/ArticleList';
 import { ArticleDetail } from './components/ArticleDetail';
 import { CreateArticleModal } from './components/CreateArticleModal';
+import { BulkPrintModal } from './components/BulkPrintModal';
 
 export default function App() {
   const { articles, loading, error, handleDeleted, performSearch, resetSearch } = useArticles();
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isBulkPrintModalOpen, setIsBulkPrintModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [filterType, setFilterType] = useState('all');
@@ -158,6 +160,14 @@ export default function App() {
               )}
             </div>
             
+            <button 
+              className="btn ghost topbar-btn"
+              onClick={() => setIsBulkPrintModalOpen(true)}
+              disabled={articles.length === 0}
+            >
+              Imprimir
+            </button>
+            
             <button className="btn primary topbar-btn" onClick={handleOpenCreateModal}>
               Novo artigo
             </button>
@@ -210,6 +220,12 @@ export default function App() {
         isOpen={isCreateModalOpen}
         onClose={handleCloseCreateModal}
         onCreated={handleArticleCreated}
+      />
+
+      <BulkPrintModal 
+        isOpen={isBulkPrintModalOpen}
+        onClose={() => setIsBulkPrintModalOpen(false)}
+        articles={articles}
       />
     </>
   );

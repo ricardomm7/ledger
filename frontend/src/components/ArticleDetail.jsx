@@ -76,6 +76,27 @@ export function ArticleDetail({ article, onBack }) {
           </div>
         </div>
       </div>
+
+      {/* Área de impressão */}
+      <div className="print-only">
+        <div className="print-grid">
+          <div className="print-qr-card">
+            <div className="print-qr-code">
+              <QRCodeSVG 
+                value={article.id.toString()}
+                size={120}
+                level="H"
+                includeMargin={false}
+              />
+            </div>
+            <div className="print-qr-info">
+              <div className="print-qr-id">{article.id}</div>
+              <div className="print-qr-type">{article.type}</div>
+              <div className="print-qr-description">{article.description}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
